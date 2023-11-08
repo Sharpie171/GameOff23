@@ -13,6 +13,7 @@ CombatManager::~CombatManager()
 
 FCombatPacket* CombatManager::requestPacket()
 {
+	int test = 23;
 	return nullptr;
 }
 
