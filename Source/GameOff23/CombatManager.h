@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UObject/NoExportTypes.h"
 #include "CombatManager.generated.h"
 
 /**
@@ -22,24 +23,30 @@ struct FCombatPacket
             FVector targetLocation;
         UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat Manager")
             TArray<AActor*> victims;
+        int packetId;
 };
 
-class GAMEOFF23_API CombatManager
+UCLASS(BlueprintType)
+class GAMEOFF23_API UCombatManager : public
+    UObject
 {
+    GENERATED_BODY()
+
+
 public:
-	CombatManager();
-	~CombatManager();
+    UCombatManager();
+	~UCombatManager();
     UFUNCTION(BlueprintCallable, Category = "Combat Manager")
-    FCombatPacket* requestPacket();
-    UFUNCTION(BlueprintCallable, BlueprintReadWrite, Category = "Combat Manager")
-    void returnPacket();
+    FCombatPacket requestPacket();
+    UFUNCTION(BlueprintCallable, Category = "Combat Manager")
+    void returnPacket(FCombatPacket returnedPacket);
 private:
     // Keep track of which packets have been reserved
     TArray<bool> reserved;
     // Create a new packet
-    FCombatPacket* createPacket();
+    FCombatPacket createPacket(bool reserve);
     // Hold the allocated combat packets.
-    TArray<FCombatPacket*> CombatPackets;
+    TArray<FCombatPacket> CombatPackets;
     // Define a minimum number of combat packets to hold in the array
     int minPackets = 3;
 };

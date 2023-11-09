@@ -3,25 +3,47 @@
 
 #include "CombatManager.h"
 
-CombatManager::CombatManager()
+UCombatManager::UCombatManager()
+{
+	// Setup the arrays to their defaults
+	for (int i = 0; i < minPackets; i++) {
+		FCombatPacket newPacket = FCombatPacket();
+		newPacket.packetId = i;
+		CombatPackets.Push(newPacket);
+		reserved.Push(false);
+	}
+}
+
+UCombatManager::~UCombatManager()
 {
 }
 
-CombatManager::~CombatManager()
+FCombatPacket UCombatManager::requestPacket()
 {
+	// If one of the combat packets already allocated is not reserved, return it
+	for (int i = 0; i < CombatPackets.Num(); i++) {
+		if (!reserved[i]) {
+			reserved[i] = true;
+			return CombatPackets[i];
+		}
+	}
+	// Allocate a new packet, mark it as reserved, and return it
+	return createPacket(true);
 }
 
-FCombatPacket* CombatManager::requestPacket()
+void UCombatManager::returnPacket(FCombatPacket returnedPacket)
 {
-	int test = 23;
-	return nullptr;
+	// Mark packet as unreserved
+	reserved[returnedPacket.packetId] = false;
+	// Create a new packet
+	CombatPackets[returnedPacket.packetId] = FCombatPacket();
 }
 
-void CombatManager::returnPacket()
+FCombatPacket UCombatManager::createPacket(bool reserve)
 {
-}
-
-FCombatPacket* CombatManager::createPacket()
-{
-	return nullptr;
+	// Called to add a packet to the Tarrays
+	FCombatPacket newPacket = FCombatPacket();
+	CombatPackets.Push(newPacket);
+	reserved.Push(reserve);
+	return newPacket;
 }
